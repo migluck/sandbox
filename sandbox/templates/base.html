@@ -1,4 +1,5 @@
 {% load static wagtailuserbar %}
+{% load bootstrap4 %}
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -19,9 +20,10 @@
 
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/sandbox.css' %}">
-
+        {% bootstrap_css %}
+        
         {% block extra_css %}
-            {# Override this in templates to add extra stylesheets #}
+            {# Override this in templates to add extra stylesheets #}            
         {% endblock %}
     </head>
 
@@ -32,8 +34,9 @@
 
         {# Global javascript #}
         <script type="text/javascript" src="{% static 'js/sandbox.js' %}"></script>
+        {% bootstrap_javascript jquery='full' %}
 
-        {% block extra_js %}
+        {% block extra_js %}            
             {# Override this in templates to add extra javascript #}
         {% endblock %}
     </body>
