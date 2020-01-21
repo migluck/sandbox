@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'flex',
     'contact',
+    'blog',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
