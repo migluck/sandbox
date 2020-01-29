@@ -3,7 +3,10 @@ from django.db import models
 # Other imports
 from wagtail.core.models import Page
 from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.core.fields import StreamField
+from wagtail.core import blocks
+from wagtail.images.blocks import ImageChooserBlock
 
 # Create your models here.
 class BlogHomePage(Page):
@@ -45,4 +48,21 @@ class BlogPage(Page):
             FieldPanel('date'),
             FieldPanel('summary'),
             FieldPanel('body', classname="full")
+        ]
+
+class BlogStreamPage(Page):
+    templates = "home/blog_stream_page"
+    
+    author = models.CharField( max_length=255 )
+    date = models.DateField("Post Date")
+    body = StreamField([
+            ('heading', blocks.CharBlock(classname="full title")),
+            ('paragraph', blocks.RichTextBlock()),
+            ('image', ImageChooserBlock()),
+        ])
+    
+    content_panels = Page.content_panels + [
+            FieldPanel('author'),
+            FieldPanel('date'),
+            StreamFieldPanel('body'),        
         ]

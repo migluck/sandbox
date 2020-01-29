@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block content %}
+	<h1>{{ page.author }}</h1>
+	<p class="meta">{{ page.date }}</p>
+	
+	{% for block in page.body %}
+	<div>
+		{% if block.block_type == 'image' %}
+			{% image block.value width-200%}
+		{% else %}	
+			{{ block.value }}</p>
+		{% endif %}   
+	</div>
+	{% endfor %}		
+	
+
+{% endblock %}
