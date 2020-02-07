@@ -47,8 +47,7 @@ class CardBlock(blocks.StructBlock):
                      ("title", blocks.CharBlock(required=True, max_length=40)),
                      ("text", blocks.TextBlock(required=True, max_length=200)),
                      ("button_page", blocks.PageChooserBlock(required=False)),
-                     ("button_url", blocks.URLBlock(required=False, help_text="If button_page selected use that first."))                      
-                        
+                     ("button_url", blocks.URLBlock(required=False, help_text="If button_page selected use that first."))                                              
                      ]
                 )
         )
@@ -56,4 +55,17 @@ class CardBlock(blocks.StructBlock):
     class Meta: # noqa
         template = "streams/card_block.html"
         icon = "placeholder"
-        label = "Block Cards"        
+        label = "Block Cards"      
+
+class CTABlock(blocks.StructBlock):
+    """A simple call to action section."""
+    title = blocks.CharBlock(required=True, max_length=60)
+    text = RichTextBlock(required=True, features=["bold", "italic"])
+    button_page = blocks.PageChooserBlock(required=False)
+    button_url = blocks.URLBlock(required=False)
+    button_text = blocks.CharBlock(reuired=True, default="Learn More", max_length=40)
+     
+    class Meta: # noqa
+        template = "streams/cta_block.html"
+        icon = "placeholder"
+        label = "Call to Action"

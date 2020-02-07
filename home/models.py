@@ -1,10 +1,11 @@
 from django.db import models
 
 from wagtail.core.models import Page, Orderable
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, InlinePanel, MultiFieldPanel
-from wagtail.core.fields import RichTextField
+from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from modelcluster.fields import ParentalKey
+from streams import blocks
 
 
 class HomePageCarouselImages(Orderable):
@@ -47,6 +48,18 @@ class HomePage(Page):
             on_delete=models.SET_NULL,
             related_name="+"
         )
+
+    content = StreamField(
+        [
+                ("title_and_text", blocks.TitleAndTextBlock()),
+                ("rich_text", blocks.RichTextBlock()),
+                ("simple_text", blocks.SimpleTextBlock()),
+                ("cards", blocks.CardBlock()),
+                ("cta", blocks.CTABlock())
+        ],
+        null=True,
+        blank=True
+        )
     
     content_panels = Page.content_panels + [
             MultiFieldPanel([
@@ -57,7 +70,8 @@ class HomePage(Page):
             ], heading="Banner Options"), 
             MultiFieldPanel([
                 InlinePanel("carousel_images", max_num=5, min_num=1, label="Image")
-            ], heading="Carousel Images")
+            ], heading="Carousel Images"),
+            StreamFieldPanel("content")
         ]
 
     class Meta:
