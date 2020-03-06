@@ -56,7 +56,8 @@ class HomePage(RoutablePageMixin, Page):
                 ("rich_text", blocks.RichTextBlock()),
                 ("simple_text", blocks.SimpleTextBlock()),
                 ("cards", blocks.CardBlock()),
-                ("cta", blocks.CTABlock())
+                ("cta", blocks.CTABlock()),
+                ("button", blocks.ButtonBlock())
         ],
         null=True,
         blank=True
