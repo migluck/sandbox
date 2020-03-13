@@ -1,5 +1,6 @@
 from django.db import models
 from django.shortcuts import render
+from django import forms
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import StreamField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, MultiFieldPanel
@@ -9,8 +10,12 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.admin.edit_handlers import InlinePanel
 from streams import blocks
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from wagtail.admin.templatetags.wagtailadmin_tags import allow_unicode_slugs
 
+ #############################################
+ # ORDERABLE
+ #############################################
 # Create your models here.
 class BlogAuthorsOrderable(Orderable):
     """This allows us to select one or more blog authors"""
@@ -25,6 +30,10 @@ class BlogAuthorsOrderable(Orderable):
             SnippetChooserPanel("author")
         ]
 
+
+ #############################################
+ # SNIPPET
+ #############################################
 class MyBlogAuthor(models.Model):
     """Blog author for snippets."""
     
@@ -64,6 +73,36 @@ class MyBlogAuthor(models.Model):
         
 register_snippet(MyBlogAuthor)
 
+class MyBlogCategory(models.Model):
+    """Blog category for a snippet"""
+    
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(
+            verbose_name="slug",
+            allow_unicode=True,
+            max_length=255,
+            help_text="A slug to identify posts by this category"
+        )
+    
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug")
+        ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta: # noqa
+        verbose_name = "My Blog Category"
+        verbose_name_plural = "My Blog Categories"
+        ordering=["name"]
+        
+register_snippet(MyBlogCategory)
+                
+ #############################################
+ # PAGES
+ #############################################
+
 class MyblogListingPage(RoutablePageMixin, Page):
     """"List all the MyBlog Detail Pages"""
     
@@ -81,6 +120,7 @@ class MyblogListingPage(RoutablePageMixin, Page):
         context["posts"] = MyblogDetailPage.objects.live().public()
         context["regular_context_var"] = "Hello world 123123"
         context["special_link"] = self.reverse_subpage('latest_posts')
+        context["categories"] = MyBlogCategory.objects.all()
         return context
     
     content_panels = Page.content_panels + [
@@ -127,6 +167,8 @@ class MyblogDetailPage(Page):
         related_name="+"
         )
     
+    categories = ParentalManyToManyField("myblog.MyBlogCategory", blank=True)
+    
     content = StreamField(
         [
                 ("title_and_text", blocks.TitleAndTextBlock()),
@@ -147,6 +189,12 @@ class MyblogDetailPage(Page):
                         InlinePanel("blog_authors", label="Author", min_num=1, max_num=5)
                 ],
                 heading="Author(s)"
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel("categories", widget=forms.CheckboxSelectMultiple),
+                ],
+                heading="categories"                                    
             ),
             StreamFieldPanel("content"), 
         ]

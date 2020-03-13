@@ -2,7 +2,15 @@
 {% load wagtailimages_tags wagtailroutablepage_tags %}
 
 {% block content %}
-	<h1>special link = {{ special_link }}</h1>
+	<h1>Categories</h1>
+	<div>
+	<ul>
+		{% for cat in categories %}
+			<li><a href="{{ self.get_parent.url }}?category={{ cat.slug }}">{{cat.name}}</a></li>
+		{% endfor %}		
+	</ul>
+	</div>
+	
 	<a href="{% routablepageurl page "latest_posts" %}">View latest Posts</a>
 	
 	<div class="container">
